@@ -1,22 +1,24 @@
-import { useState } from 'react'; // Only import useState
+import { useContext } from 'react'; // Only import useState
 import PropTypes from 'prop-types';
 import './FoodItem.css';
 import { assets } from '../../assets/assets';
+import {storeContext} from '../../context/StoreContext'
 
-const FoodItem = ({ name, price, description, image }) => {
-  const [itemCount, setItemCount] = useState(0);
+const FoodItem = ({id,name, price, description, image }) => {
+  
+  const {cartItems,addToCart,removeFromCart} = useContext(storeContext);
 
   return (
     <div className='food-item'>
       <div className="food-item-img-container">
         <img className='food-item-image' src={image} alt={name} />
-        {!itemCount
-          ? <img className='add' onClick={() => setItemCount(prev => prev + 1)} src={assets.add_icon_white} alt="Add item" />
+        {!cartItems[id]
+          ? <img className='add' onClick={() =>addToCart(id)} src={assets.add_icon_white} alt="Add item" />
           : <div className='food-item-counter'>
               {/* Counter component or logic here */}
-              <button onClick={() => setItemCount(prev => prev - 1)}>-</button>
-              <span>{itemCount}</span>
-              <button onClick={() => setItemCount(prev => prev + 1)}>+</button>
+              <img  onClick={() => removeFromCart(id) } src={assets.remove_icon_red} alt=""/>
+              <p>{cartItems[id]}</p>
+              <img onClick={() =>addToCart(id)} src={assets.add_icon_green} alt="" />
             </div>
         }
       </div>
@@ -37,6 +39,8 @@ FoodItem.propTypes = {
   price: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+
 };
 
 export default FoodItem;
