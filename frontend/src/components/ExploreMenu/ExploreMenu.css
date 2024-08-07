@@ -39,6 +39,25 @@
 
 
 }
+
+.explore-menu-list-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    border-radius: 50%; /* Ensures the item itself is circular */
+}
+
+.explore-menu-list-item:hover {
+    background-color: rgba(200, 200, 200, 0.5); /* Light gray background on hover */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for hover effect */
+}
+
+.explore-menu-list-item.active {
+    background-color: rgba(200, 200, 200, 0.8); /* Slightly darker gray for active state */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Slightly stronger shadow for active state */
+}
 .explore-menu hr{
     margin:10px 0;
     height:2px;

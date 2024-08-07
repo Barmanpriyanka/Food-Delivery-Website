@@ -8,13 +8,15 @@ const FoodDisplay = ({ category }) => {
   const { food_list } = useContext(StoreContext);
 
   // Filter food_list based on category
-  const filteredFoodList = category === 'All' ? food_list : food_list.filter(item => item.category === category);
+  const filteredFoodList = category === 'All'
+    ? food_list
+    : food_list.filter(item => item.category === category);
 
   return (
     <div className='food-display' id='food-display'>
       <h2>Top dishes near you</h2>
       <div className="food-display-list">
-        {filteredFoodList.map((item) => (
+        {filteredFoodList.map(item => (
           <FoodItem 
             key={item._id} 
             id={item._id} 

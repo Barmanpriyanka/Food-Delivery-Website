@@ -2,11 +2,11 @@ import { useContext } from 'react'; // Only import useState
 import PropTypes from 'prop-types';
 import './FoodItem.css';
 import { assets } from '../../assets/assets';
-import {storeContext} from '../../context/StoreContext'
+import {StoreContext} from '../../context/StoreContext'
 
 const FoodItem = ({id,name, price, description, image }) => {
   
-  const {cartItems,addToCart,removeFromCart} = useContext(storeContext);
+  const {cartItems,addToCart,removeFromCart} = useContext(StoreContext);
 
   return (
     <div className='food-item'>
