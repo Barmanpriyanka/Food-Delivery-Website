@@ -3,9 +3,9 @@ import './Add.css';
 import { assets } from '../../assets/assets';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import PropTypes from 'prop-types'; // Import PropTypes
 
-const Add = () => {
-  const url = "http://localhost:4000";
+const Add = ({ url }) => {
   const [image, setImage] = useState(null);
   const [data, setData] = useState({
     name: "",
@@ -39,11 +39,12 @@ const Add = () => {
           category: "Salad"
         });
         setImage(null); // Corrected to set null to clear the image
-        toast.success(response.data.message)
+        toast.success(response.data.message);
       }
       console.log('Form submitted:', { ...data, image });
     } catch (error) {
       console.error('Error submitting the form:', error);
+      toast.error('Failed to add the food item');
     }
   };
 
@@ -130,6 +131,10 @@ const Add = () => {
       </form>
     </div>
   );
+};
+
+Add.propTypes = {
+  url: PropTypes.string.isRequired, // Validate that url is a required string
 };
 
 export default Add;

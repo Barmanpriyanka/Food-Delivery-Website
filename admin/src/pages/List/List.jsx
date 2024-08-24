@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react'; // eslint-disable-line no-un
 import './List.css';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import PropTypes from 'prop-types'; // Import PropTypes
 
-const List = () => {
-  const url = 'http://localhost:4000';
+const List = ({ url }) => {
   const [list, setList] = useState([]);
 
-  
   const fetchList = async () => {
     try {
       const response = await axios.get(`${url}/api/food/list`);
@@ -22,14 +21,12 @@ const List = () => {
     }
   };
 
- 
   const removeFood = async (foodId) => {
     try {
       const response = await axios.post(`${url}/api/food/remove`, { id: foodId });
       await fetchList();
       if (response.data.success) {
-         toast.success(response.data.message)
-
+        toast.success(response.data.message);
       } else {
         toast.error('Error removing the food item');
       }
@@ -39,7 +36,6 @@ const List = () => {
     }
   };
 
-  
   useEffect(() => {
     fetchList();
   }, []);
@@ -70,6 +66,10 @@ const List = () => {
       </div>
     </div>
   );
+};
+
+List.propTypes = {
+  url: PropTypes.string.isRequired, // Validate that url is a required string
 };
 
 export default List;
