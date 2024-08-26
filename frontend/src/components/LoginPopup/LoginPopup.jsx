@@ -3,9 +3,10 @@ import PropTypes from 'prop-types'; // Import PropTypes
 import './LoginPopup.css';
 import { assets } from '../../assets/assets';
 import { StoreContext } from '../../context/StoreContext';
+import axios from "axios"
 
 const LoginPopup = ({ setShowLogin }) => {
-  const { url } = useContext(StoreContext); // Use the context
+  const { url, setToken } = useContext(StoreContext); // Use the context
   const [currState, setCurrState] = useState("Login");
   const [data, setData] = useState({
     name: "",
@@ -23,13 +24,19 @@ const LoginPopup = ({ setShowLogin }) => {
 
   const onLogin = async (event) => {
     event.preventDefault(); 
-    let newUrl=url;
-    if(currState==="Login"){
-      newUrl+="/api/user/login"
-
+    let newUrl = url;
+    if (currState === "Login") {
+      newUrl += "/api/user/login";
+    } else {
+      newUrl += "/api/user/register"; // Use the correct variable name newUrl
     }
-    else{
-      newurl+="/api/user/register"
+    const response = await axios.post(newUrl, data); // Ensure newUrl is used correctly
+    if (response.data.success) {
+      setToken(response.data.token);
+      localStorage.setItem("token", response.data.token);
+      setShowLogin(false);
+    } else {
+      alert(response.data.message);
     }
   };
 
