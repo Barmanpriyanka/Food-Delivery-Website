@@ -35,53 +35,17 @@ const PlaceOrder = () => {
       }));
 
     if (ordersItems.length === 0) {
-      alert("Your cart is empty!");
+      alert("Your cart is empty! Please add items to your cart before placing an order.");
       return;
     }
 
-    console.log("User ID:", token); // Log user ID for debugging
-    console.log("Items:", ordersItems); // Log items for debugging
-    console.log("Amount:", getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2); // Log amount for debugging
-    console.log("Address:", data); // Log address for debugging
-
-    console.log("User ID:", token); // Log user ID for debugging
-    console.log("Items:", ordersItems); // Log items for debugging
-    console.log("Amount:", getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2); // Log amount for debugging
-    console.log("Address:", data); // Log address for debugging
-
-    console.log("User ID:", token); // Log user ID for debugging
-    console.log("Items:", ordersItems); // Log items for debugging
-    console.log("Amount:", getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2); // Log amount for debugging
-    console.log("Address:", data); // Log address for debugging
-
-    console.log("User ID:", token); // Log user ID for debugging
-    console.log("Items:", ordersItems); // Log items for debugging
-    console.log("Amount:", getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2); // Log amount for debugging
-    console.log("Address:", data); // Log address for debugging
-
-    console.log("User ID:", token); // Log user ID for debugging
-    console.log("Items:", ordersItems); // Log items for debugging
-    console.log("Amount:", getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2); // Log amount for debugging
-    console.log("Address:", data); // Log address for debugging
-
-    console.log("User ID:", token); // Log user ID for debugging
-    console.log("Items:", ordersItems); // Log items for debugging
-    console.log("Amount:", getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2); // Log amount for debugging
-    console.log("Address:", data); // Log address for debugging
-
     let orderData = {
-
-
-
-
-
       userId: token, // Assuming the backend extracts userId from the token
       address: data,
       items: ordersItems,
-      amount: getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2,
+      amount: getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 200, // Updated delivery fee to ₹2 in paise
     };
 
-    console.log("Order Data:", orderData); // Log order data for debugging
     try {
       let response = await axios.post(`${url}/api/order/place`, orderData, {
         headers: { token },
@@ -93,7 +57,7 @@ const PlaceOrder = () => {
         alert(response.data.message || "Something went wrong!");
       }
     } catch (error) {
-      alert("Failed to place order. Please try again.");
+      alert("Failed to place order. Please check your input and try again.");
       console.error("Order Placement Error:", error);
     }
   };
