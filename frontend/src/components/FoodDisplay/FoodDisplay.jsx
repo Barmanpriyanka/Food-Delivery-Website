@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'; // eslint-disable-line no-unused-vars
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import './FoodDisplay.css';
 import { StoreContext } from '../../context/StoreContext';
