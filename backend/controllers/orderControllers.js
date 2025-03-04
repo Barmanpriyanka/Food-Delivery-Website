@@ -80,5 +80,41 @@ const placeOrder = async (req, res) => {
   }
 };
 
+const verifyOrder = async (req, res) => {
+  console.log("Payment verification request received:", req.body); // Debugging log
 
-export { placeOrder };
+  try {
+  const { success, orderId } = req.body;
+
+      console.log("Payment verification request received:", req.body);
+
+      if (!orderId) {
+          return res.status(400).json({ success: false, message: "Order ID is missing" });
+      }
+
+      if (success) {
+          const updatedOrder = await orderModel.findByIdAndUpdate(
+              orderId,
+              { status: "Paid" },
+              { new: true }
+          );
+
+          if (!updatedOrder) {
+              return res.status(404).json({ success: false, message: "Order not found" });
+          }
+
+          console.log("✅ Order updated in MongoDB:", updatedOrder);
+          return res.json({ success: true, message: "Payment verified", order: updatedOrder });
+      } else {
+          console.log("❌ Payment failed, order not updated.");
+          return res.status(400).json({ success: false, message: "Payment failed" });
+      }
+  } catch (error) {
+      console.error("Error verifying payment:", error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+
+export { placeOrder, verifyOrder };
