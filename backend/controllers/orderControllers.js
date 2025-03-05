@@ -117,4 +117,20 @@ const verifyOrder = async (req, res) => {
 
 
 
-export { placeOrder, verifyOrder };
+const getUserOrders = async (req, res) => {
+  try {
+    const userId = req.user.id; // Assuming user ID is stored in req.user
+    const orders = await orderModel.find({ userId }); // Fetch orders for the user
+
+    if (!orders) {
+      return res.status(404).json({ success: false, message: "No orders found" });
+    }
+
+    res.json({ success: true, orders });
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export { placeOrder, verifyOrder, getUserOrders };
