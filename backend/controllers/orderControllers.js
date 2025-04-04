@@ -27,6 +27,9 @@ const placeOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: "Minimum order amount should be ₹50" });
     }
 
+    // Convert amount to paise for Stripe
+    const amountInPaise = Math.round(amount * 100);
+
     // Create new order
     const newOrder = new orderModel({
       userId,
@@ -49,6 +52,11 @@ const placeOrder = async (req, res) => {
       },
       quantity: item.quantity || 1,
     }));
+
+    // Validate all line items have valid prices
+    if (line_items.some(item => isNaN(item.price_data.unit_amount) || item.price_data.unit_amount <= 0)) {
+      return res.status(400).json({ success: false, message: "Invalid item prices" });
+    }
 
     // Add delivery charges
     line_items.push({
@@ -119,11 +127,15 @@ const verifyOrder = async (req, res) => {
 
 const getUserOrders = async (req, res) => {
   try {
-    const userId = req.user.id; // Assuming user ID is stored in req.user
-    const orders = await orderModel.find({ userId }); // Fetch orders for the user
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ success: false, message: "Not authorized" });
+    }
 
-    if (!orders) {
-      return res.status(404).json({ success: false, message: "No orders found" });
+    const userId = req.user.id;
+    const orders = await orderModel.find({ userId }).sort({ createdAt: -1 });
+
+    if (!orders || orders.length === 0) {
+      return res.json({ success: true, orders: [], message: "No orders found" });
     }
 
     res.json({ success: true, orders });

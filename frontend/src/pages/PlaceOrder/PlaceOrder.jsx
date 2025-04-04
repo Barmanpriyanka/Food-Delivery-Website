@@ -39,11 +39,24 @@ const PlaceOrder = () => {
       return;
     }
 
+    // Decode token to get user ID
+    const decoded = JSON.parse(atob(token.split('.')[1]));
+    const userId = decoded.id;
+
+    // Format address data according to backend expectations
+    const formattedAddress = {
+      street: data.street,
+      city: data.city,
+      state: data.state,
+      zipcode: data.zipcode,
+      country: data.country
+    };
+
     let orderData = {
-      userId: token, // Assuming the backend extracts userId from the token
-      address: data,
+      userId,
+      address: formattedAddress,
       items: ordersItems,
-      amount: getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 200, // Updated delivery fee to ₹2 in paise
+      amount: getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 200,
     };
 
     try {
@@ -152,17 +165,17 @@ const PlaceOrder = () => {
           <div>
             <div className="cart-total-details">
               <p>SubTotal</p>
-              <p>${getTotalCartAmount()}</p>
+              <p>₹{getTotalCartAmount()}</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>${getTotalCartAmount() === 0 ? 0 : 2}</p>
+              <p>₹{getTotalCartAmount() === 0 ? 0 : 2}</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <p>Total</p>
-              <p>${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}</p>
+              <p>₹{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}</p>
             </div>
           </div>
           <button type="submit">PROCEED TO PAYMENT</button>

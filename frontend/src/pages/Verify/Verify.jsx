@@ -9,7 +9,7 @@ const Verify = () => {
   const success = searchParams.get("success") === "true"; // Convert to boolean
   const orderId = searchParams.get("orderId");
 
-  const { url } = useContext(StoreContext);
+  const { url, token, setToken } = useContext(StoreContext);
   const navigate = useNavigate();
 
   const verifyPayment = useCallback(async () => {
@@ -22,17 +22,21 @@ const Verify = () => {
     try {
       console.log("Verifying payment for Order ID:", orderId, "Success:", success);
 
-      const response = await axios.post(`${url}/api/order/verify`, { success, orderId });
+      const response = await axios.post(`${url}/api/order/verify`, 
+        { success, orderId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       console.log("API Response:", response.data); // Debugging response
 
       if (response.data.success) {
         console.log("Payment successful. Navigating to /myorders...");
-        
-        // Debugging: Adding a small delay before navigating
-        setTimeout(() => {
-          navigate("/myorders");
-        }, 2000);
+        // Refresh token from localStorage in case it was updated
+        const updatedToken = localStorage.getItem("token");
+        if (updatedToken) {
+          setToken(updatedToken);
+        }
+        navigate("/myorders");
       } else {
         console.log("Payment failed. Navigating to /...");
         navigate("/");
@@ -41,7 +45,7 @@ const Verify = () => {
       console.error("Payment verification failed:", error);
       navigate("/");
     }
-  }, [url, navigate, success, orderId]);
+  }, [url, navigate, success, orderId, token]);
 
   useEffect(() => {
     console.log("Order ID:", orderId); // Debug log

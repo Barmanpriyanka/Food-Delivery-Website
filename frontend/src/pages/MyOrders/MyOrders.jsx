@@ -6,62 +6,103 @@ import { assets } from '../../assets/assets';
 
 const MyOrders = () => {
     const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const { url, token } = useContext(StoreContext);
 
     const fetchOrders = useCallback(async () => {
         if (!token) {
-            console.log("Token found:", token); // Added logging to verify token
-            console.error("No token found. User is not authorized."); 
-
-
-
+            setError("Please login to view your orders");
+            setLoading(false);
             return;
         }
 
         try {
-const response = await axios.get(
-
-                `${url}/api/order/userorders`, 
-
-                { headers: { Authorization: `Bearer ${token}` } } // ✅ Correct token format
+            setLoading(true);
+            const response = await axios.get(
+                `${url}/api/order/userorders`,
+                { headers: { Authorization: `Bearer ${token}` } }
             );
-            console.log("API Response:", response.data); // Debugging log
-            if (response.data && response.data.data && response.data.success) {
-                setData(response.data.data);
+            
+            console.log("Orders API Response:", response.data); // Debug log
+            
+            if (response.data.success && Array.isArray(response.data.orders)) {
+                setData(response.data.orders);
+            } else if (response.data.message) {
+                setError(response.data.message);
             } else {
-                console.error("Unexpected API response:", response.data); // Debugging log for unexpected response
-                console.log("Full response:", response); // Log the full response for debugging
+                setError("Received unexpected response format");
+                console.warn("Unexpected response format:", response.data);
             }
         } catch (error) {
             console.error("Error fetching orders:", error);
+            setError("Failed to fetch orders. Please try again later.");
+        } finally {
+            setLoading(false);
         }
-    }, [url, token]); // ✅ Correct dependency array
+    }, [url, token]);
 
     useEffect(() => {
         fetchOrders();
     }, [fetchOrders]);
 
+    const formatDate = (dateString) => {
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                return 'Date not available';
+            }
+            const options = { 
+                day: 'numeric',
+                month: 'short', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            };
+            return date.toLocaleString('en-IN', options);
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return 'Date not available';
+        }
+    };
+
     return (
         <div className="my-orders">
             <h2>My Orders</h2>
-            <div className="container">
-                {data.length > 0 ? (
-                    data.map((order, index) => (
-                        <div key={index} className="my-order-order">  {/* ✅ Added key */}
-                            <img src={assets.parcel_icon} alt="Parcel Icon" /> {/* ✅ Ensured valid import */}
-                            <p>
-                                {order.items.map((item,index)=>{
-                                    if(index=== order.items.length-1){
-                                        return item.name+" x " + item.quantity
-                                    }
-                                })}
-                            </p>
+            {loading ? (
+                <p>Loading your orders...</p>
+            ) : error ? (
+                <p className="error">{error}</p>
+            ) : data.length > 0 ? (
+                <div className="container">
+                    {data.map((order) => (
+                        <div key={order._id} className="order-card">
+                            <div className="order-header">
+                                <img src={assets.parcel_icon} alt="Parcel Icon" />
+                                <div>
+                                    <h3>Order #{order._id.slice(-6).toUpperCase()}</h3>
+                                    <p>Placed on: {formatDate(order.createdAt)}</p>
+                                    <p>Status: {order.status}</p>
+                                    <p>Total: ₹{order.amount}</p>
+                                </div>
+                            </div>
+                            <div className="order-items">
+                                <h4>Items:</h4>
+                                <ul>
+                                    {order.items.map((item) => (
+                                        <li key={`${item._id}-${item.name}-${item.quantity}`}>
+                                            {item.name} x {item.quantity} (₹{item.price * item.quantity})
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
-                    ))
-                ) : (
-                    <p>No orders found.</p>
-                )}
-            </div>
+                    ))}
+                </div>
+            ) : (
+                <p>No orders found.</p>
+            )}
         </div>
     );
 };

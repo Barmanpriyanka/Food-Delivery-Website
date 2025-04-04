@@ -6,7 +6,18 @@ const orderSchema = new mongoose.Schema({
   amount: { type: Number, required: true },  // Fixed typo
   address: { type: Object, required: true },
   status: { type: String, default: "Food Processing" },
-  date: { type: Date, default: Date.now },
+  date: { 
+    type: Date, 
+    default: Date.now,
+    get: (date) => date.toLocaleString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
+  },
   payment: { type: Boolean, default: false }
 });
 
