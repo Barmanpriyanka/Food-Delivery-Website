@@ -1,6 +1,6 @@
 import express from "express";
 import authMiddleware from "../middleware/auth.js";
-import { placeOrder, verifyOrder, getUserOrders } from "../controllers/orderControllers.js"; // Ensure filename matches
+import { placeOrder, verifyOrder, getUserOrders, listOrders } from "../controllers/orderControllers.js"; // Ensure filename matches
 
 
 const orderRouter = express.Router();

@@ -57,10 +57,11 @@ const PlaceOrder = () => {
       userId,
       address: formattedAddress,
       items: ordersItems,
-      amount: getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 200,
+      amount: getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2, // Total in rupees (backend will convert to paise)
     };
 
     try {
+      console.log("Sending order data:", orderData); // Debug log
       let response = await axios.post(`${url}/api/order/place`, orderData, {
         headers: { token },
       });
@@ -71,8 +72,12 @@ const PlaceOrder = () => {
         alert(response.data.message || "Something went wrong!");
       }
     } catch (error) {
-      alert("Failed to place order. Please check your input and try again.");
-      console.error("Order Placement Error:", error);
+      console.error("Full error details:", {
+        error: error.response?.data || error.message,
+        requestData: orderData,
+        config: error.config
+      });
+      alert(`Failed to place order: ${error.response?.data?.message || error.message}`);
     }
   };
   const navigate = useNavigate();
@@ -180,12 +185,12 @@ const PlaceOrder = () => {
             <hr />
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>₹{getTotalCartAmount() === 0 ? 0 : 2}</p>
+              <p>₹{getTotalCartAmount() === 0 ? 0 : 200}</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <p>Total</p>
-              <p>₹{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}</p>
+              <p>₹{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 200}</p>
             </div>
           </div>
           <button type="submit">PROCEED TO PAYMENT</button>
