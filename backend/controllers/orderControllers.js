@@ -144,5 +144,16 @@ const getUserOrders = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+//listing order for the admin panel
+const listOrders=async(req,res)=>
+{
+     try{
+     const orders = await orderModel.find({});
+     res.json({success:true,data:orders})
+     }catch(error){
+            console.log(error);
+            res.json({success:false,message:"Error"})
+     }
+}
 
-export { placeOrder, verifyOrder, getUserOrders };
+export { placeOrder, verifyOrder, getUserOrders,listOrders };
