@@ -24,9 +24,10 @@ const StoreContextProvider = ({ children }) => {
   const loadCartData = async (token) => {
     if (!token) return;
     try {
+      const decoded = JSON.parse(atob(token.split('.')[1]));
       const response = await axios.post(
         `${url}/api/cart/get`,
-        {},
+        { userId: decoded.id },
         { headers: { token } }
       );
       setCartItems(response.data.cartData || {});
@@ -52,9 +53,10 @@ const StoreContextProvider = ({ children }) => {
 
     if (token) {
       try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
         await axios.post(
           `${url}/api/cart/add`,
-          { itemId },
+          { itemId, userId: decoded.id },
           { headers: { token } }
         );
       } catch (error) {
@@ -70,16 +72,17 @@ const StoreContextProvider = ({ children }) => {
       if (newCart[itemId] > 1) {
         newCart[itemId] -= 1;
       } else {
-        delete newCart[itemId]; // Remove item if count is 0
+        delete newCart[itemId];
       }
       return newCart;
     });
 
     if (token) {
       try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
         await axios.post(
           `${url}/api/cart/remove`,
-          { itemId },
+          { itemId, userId: decoded.id },
           { headers: { token } }
         );
       } catch (error) {

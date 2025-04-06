@@ -1,13 +1,12 @@
 import { useState } from 'react'; 
-import { Route, Routes } from 'react-router-dom';
-
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Home from './pages/Home/Home';
 import Cart from './pages/Cart/Cart';
 import PlaceOrder from './pages/PlaceOrder/PlaceOrder';
 import Footer from './components/Footer/Footer';
 import LoginPopup from './components/LoginPopup/LoginPopup';
-import Verify from './pages/Verify/Verify'; // ✅ Import Verify properly
+import Verify from './pages/Verify/Verify';
 import MyOrders from './pages/MyOrders/MyOrders';
 
 const App = () => {
@@ -16,15 +15,16 @@ const App = () => {
   return (
     <>
       {showLogin ? <LoginPopup setShowLogin={setShowLogin} /> : null}
-
       <div className='app'>
         <Navbar setShowLogin={setShowLogin} />
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/home' element={<Home />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/order' element={<PlaceOrder />} />
           <Route path='/verify' element={<Verify />} />
-          <Route path='/myorders' element={<MyOrders />} /> {/* ✅ Fixed */}
+          <Route path='/myorders' element={<MyOrders />} />
+          <Route path='*' element={<Navigate to='/' replace />} />
         </Routes>
       </div>
       <Footer />

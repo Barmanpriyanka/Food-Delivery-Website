@@ -1,4 +1,4 @@
-import { useContext, useState ,useEffect} from "react";
+import { useContext, useState, useEffect } from "react";
 import "./PlaceOrder.css";
 import { useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
@@ -28,14 +28,21 @@ const PlaceOrder = () => {
   const placeOrder = async (event) => {
     event.preventDefault();
 
-    let ordersItems = food_list
-      .filter((item) => cartItems[item._id] > 0)
-      .map((item) => ({
-        ...item,
-        quantity: cartItems[item._id],
-      }));
+    // Prepare items array with required fields
+    let orderItems = [];
+    for (const itemId in cartItems) {
+      const foodItem = food_list.find((item) => item._id === itemId);
+      if (foodItem && cartItems[itemId] > 0) {
+        orderItems.push({
+          _id: foodItem._id,
+          name: foodItem.name,
+          price: foodItem.price,
+          quantity: cartItems[itemId]
+        });
+      }
+    }
 
-    if (ordersItems.length === 0) {
+    if (orderItems.length === 0) {
       alert("Your cart is empty! Please add items to your cart before placing an order.");
       return;
     }
@@ -44,24 +51,31 @@ const PlaceOrder = () => {
     const decoded = JSON.parse(atob(token.split('.')[1]));
     const userId = decoded.id;
 
-    // Format address data according to backend expectations
-    const formattedAddress = {
-      street: data.street,
-      city: data.city,
-      state: data.state,
-      zipcode: data.zipcode,
-      country: data.country
-    };
+    // Calculate total amount including delivery fee
+    const subtotal = getTotalCartAmount();
+    const deliveryFee = 200; // ₹2 in paise
+    const totalAmount = subtotal + deliveryFee;
 
+    // Format order data for backend
     let orderData = {
       userId,
-      address: formattedAddress,
-      items: ordersItems,
-      amount: getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2, // Total in rupees (backend will convert to paise)
+      address: {
+        street: data.street,
+        city: data.city,
+        state: data.state,
+        zipcode: data.zipcode,
+        country: data.country,
+        contact: {
+          name: `${data.firstName} ${data.lastName}`,
+          email: data.email,
+          phone: data.phone
+        }
+      },
+      items: orderItems,
+      amount: totalAmount
     };
 
     try {
-      console.log("Sending order data:", orderData); // Debug log
       let response = await axios.post(`${url}/api/order/place`, orderData, {
         headers: { token },
       });
@@ -72,23 +86,22 @@ const PlaceOrder = () => {
         alert(response.data.message || "Something went wrong!");
       }
     } catch (error) {
-      console.error("Full error details:", {
+      console.error("Order placement error:", {
         error: error.response?.data || error.message,
-        requestData: orderData,
-        config: error.config
+        requestData: orderData
       });
       alert(`Failed to place order: ${error.response?.data?.message || error.message}`);
     }
   };
+
   const navigate = useNavigate();
-  useEffect(()=>{
-     if(!token){
-        navigate('/cart')
-     }
-     else if(getTotalCartAmount()===0){
-      navigate('/cart')
-     }
-  },[token])
+  useEffect(() => {
+    if (!token) {
+      navigate('/cart');
+    } else if (getTotalCartAmount() === 0) {
+      navigate('/cart');
+    }
+  }, [token]);
 
   return (
     <form onSubmit={placeOrder} className="place-order">
@@ -185,12 +198,12 @@ const PlaceOrder = () => {
             <hr />
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>₹{getTotalCartAmount() === 0 ? 0 : 200}</p>
+              <p>₹200</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <p>Total</p>
-              <p>₹{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 200}</p>
+              <p>₹{getTotalCartAmount() + 200}</p>
             </div>
           </div>
           <button type="submit">PROCEED TO PAYMENT</button>
