@@ -31,6 +31,14 @@ app.get("/", (req, res) => {
     res.send("API Working");
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server Started on http://localhost:${port}`);
+}).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.log(`Port ${port} is already in use. Trying alternative port...`);
+        const newPort = port + 1;
+        server.listen(newPort);
+    } else {
+        console.error('Server error:', err);
+    }
 });
