@@ -8,7 +8,7 @@ const StoreContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({});
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [food_list, setFoodList] = useState([]);
-  const url = "http://localhost:4000";
+  const url = "https://food-backend-9omq.onrender.com";
 
   // Fetch food list
   const fetchFoodList = async () => {
