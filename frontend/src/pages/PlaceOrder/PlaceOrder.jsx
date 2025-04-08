@@ -47,12 +47,18 @@ const PlaceOrder = () => {
       return;
     }
 
+    // Validate minimum order amount (₹50)
+    const subtotal = getTotalCartAmount();
+    if (subtotal < 50) {
+      alert("Minimum order amount is ₹50 (approximately $0.60)");
+      return;
+    }
+
     // Decode token to get user ID
     const decoded = JSON.parse(atob(token.split('.')[1]));
     const userId = decoded.id;
 
     // Calculate total amount including delivery fee
-    const subtotal = getTotalCartAmount();
     const deliveryFee = 200; // ₹2 in paise
     const totalAmount = subtotal + deliveryFee;
 
@@ -60,16 +66,15 @@ const PlaceOrder = () => {
     let orderData = {
       userId,
       address: {
+        firstName: data.firstName,
+        lastName: data.lastName,
         street: data.street,
         city: data.city,
         state: data.state,
         zipcode: data.zipcode,
         country: data.country,
-        contact: {
-          name: `${data.firstName} ${data.lastName}`,
-          email: data.email,
-          phone: data.phone
-        }
+        phone: data.phone,
+        email: data.email
       },
       items: orderItems,
       amount: totalAmount

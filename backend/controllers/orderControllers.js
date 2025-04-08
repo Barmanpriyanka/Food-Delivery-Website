@@ -23,12 +23,25 @@ const placeOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid items array" });
     }
 
+    // Validate minimum amount (₹50 which is ~$0.60 - above Stripe's $0.50 minimum)
     if (typeof amount !== "number" || amount < 50) {
-      return res.status(400).json({ success: false, message: "Minimum order amount should be ₹50" });
+      return res.status(400).json({ 
+        success: false, 
+        message: "Minimum order amount is ₹50 (approximately $0.60)" 
+      });
     }
 
     // Convert amount to paise for Stripe
     const amountInPaise = Math.round(amount * 100);
+
+    // Validate Stripe requirements before creating order
+    const usdAmount = amount / 82; // Approximate conversion rate
+    if (usdAmount < 0.5) {
+      return res.status(400).json({
+        success: false,
+        message: `Order amount too small for payment processing. Minimum is ₹50 (~$0.60)`
+      });
+    }
 
     // Create new order
     const newOrder = new orderModel({

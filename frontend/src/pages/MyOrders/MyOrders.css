@@ -1,49 +1,90 @@
-.my-orders{
-    margin:50px 0px;
+.my-orders {
+    margin: 50px 0px;
 }
-.my-orders .container{
+
+.my-orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.refresh-btn {
+    padding: 8px 16px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.refresh-btn:hover {
+    background-color: #ff3333;
+}
+
+.refresh-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: #ff3333;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: center;
+    font-weight: bold;
+    background-color: #ffe1e1;
+    border-radius: 4px;
+}
+
+.my-orders .container {
     display: flex;
     flex-direction: column;
-    gap:20px;
-    margin-top:30px;
+    gap: 20px;
+    margin-top: 30px;
 }
-.my-orders-orders{
+
+.my-orders-orders {
     display: grid;
-    grid-template-columns: 0.5fr 2fr 1fr 1fr 2fr 1fr ;
-    align-items:center ;
+    grid-template-columns: 0.5fr 2fr 1fr 1fr 2fr 1fr;
+    align-items: center;
     gap: 30px;
     font-size: 14px;
     padding: 10px 20px;
     color: #454545;
-    border: 1px solid tomato ;
+    border: 1px solid tomato;
 }
-.my-orders-orders img{
+
+.my-orders-orders img {
     width: 50px;
 }
-.my-orders-orders p span{
-    color:tomato ;
+
+.my-orders-orders p span {
+    color: tomato;
 }
-.my-orders p b{
-    font-weight:500 ;
-    color:#454545;
+
+.my-orders p b {
+    font-weight: 500;
+    color: #454545;
 }
-.my-orders-orders button{
+
+.my-orders-orders button {
     border: none;
     padding: 12px 0px;
     border-radius: 4px;
     background-color: #ffe1e1;
     cursor: pointer;
     color: #454545;
-
 }
-@media (max-width:900px)
-{
-  .my-orders-orders{
-    grid-template-columns: 1fr 2fr 1fr;
-    row-gap: 5px;
-    font-size: 12px;
-  }
-  .my-orders-orders button{
-    font-size: 10px;
-  }
+
+@media (max-width: 900px) {
+    .my-orders-orders {
+        grid-template-columns: 1fr 2fr 1fr;
+        row-gap: 5px;
+        font-size: 12px;
+    }
+    .my-orders-orders button {
+        font-size: 10px;
+    }
 }

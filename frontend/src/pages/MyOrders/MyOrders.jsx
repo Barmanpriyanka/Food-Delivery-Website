@@ -19,19 +19,27 @@ const MyOrders = () => {
 
         try {
             setLoading(true);
+            console.log("Fetching orders...");
             const response = await axios.get(
                 `${url}/api/order/userorders`,
-                { headers: { Authorization: `Bearer ${token}` } }
+                { 
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { _: Date.now() } // Prevent caching
+                }
             );
+            
+            console.log("Orders response:", response.data);
             
             if (response.data.success && Array.isArray(response.data.orders)) {
                 setData(response.data.orders);
+                setError(null);
             } else if (response.data.message) {
                 setError(response.data.message);
             } else {
                 setError("Received unexpected response format");
             }
         } catch (error) {
+            console.error("Error fetching orders:", error);
             setError("Failed to fetch orders. Please try again later.");
         } finally {
             setLoading(false);
@@ -40,11 +48,31 @@ const MyOrders = () => {
 
     useEffect(() => {
         fetchOrders();
+        
+        // Set up polling every 30 seconds
+        const intervalId = setInterval(fetchOrders, 30000);
+        
+        // Clean up interval on component unmount
+        return () => clearInterval(intervalId);
     }, [fetchOrders]);
+
+    const handleRefresh = () => {
+        fetchOrders();
+    };
 
     return (
         <div className="my-orders">
-            <h2>My Orders</h2>
+            <div className="my-orders-header">
+                <h2>My Orders</h2>
+                <button 
+                    onClick={handleRefresh}
+                    disabled={loading}
+                    className="refresh-btn"
+                >
+                    {loading ? 'Refreshing...' : 'Refresh'}
+                </button>
+            </div>
+            {error && <div className="error-message">{error}</div>}
             <div className="container">
                 {data.map((order,index)=>{
                    return(
