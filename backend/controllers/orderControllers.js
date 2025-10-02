@@ -9,7 +9,7 @@ stripe.balance.retrieve()
   .catch(err => console.error("Stripe Connection Error:", err));
 
 const placeOrder = async (req, res) => {
-  const frontend_url = process.env.FRONTEND_URL || "http://localhost:5173";
+  const frontend_url = process.env.FRONTEND_URL || "https://food-delivery-frontend-79ci.onrender.com";
 
   try {
     // Validate request body
