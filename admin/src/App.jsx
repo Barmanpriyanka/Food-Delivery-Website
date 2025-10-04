@@ -21,7 +21,6 @@ const App = () => {
           <Route path="/add" element={<Add url={url} />}/>
           <Route path="/List" element={<List url={url} />}/>
           <Route path="/orders" element={<Orders url={url} />}/>
-          <Route path="/orders" element={<Orders url={url} />} />
         </Routes>
       </div>
     </div>

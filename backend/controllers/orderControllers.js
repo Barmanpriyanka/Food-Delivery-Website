@@ -124,7 +124,7 @@ const getUserOrders = async (req, res) => {
 // List all orders (admin)
 const listOrders = async (req, res) => {
   try {
-    const orders = await orderModel.find({}).sort({ createdAt: -1 });
+    const orders = await orderModel.find({}).sort({ date: -1 });
     res.json({ success: true, data: orders });
   } catch (error) {
     console.error(error);
@@ -137,6 +137,9 @@ const updateOrderStatus = async (req, res) => {
   try {
     const { orderId, status } = req.body;
     if (!orderId || !status) return res.status(400).json({ success: false, message: "Order ID and status are required" });
+
+    const allowedStatuses = ["Food Processing", "Out for Delivery", "Delivered"];
+    if (!allowedStatuses.includes(status)) return res.status(400).json({ success: false, message: "Invalid status" });
 
     const updatedOrder = await orderModel.findByIdAndUpdate(orderId, { status }, { new: true });
     if (!updatedOrder) return res.status(404).json({ success: false, message: "Order not found" });
