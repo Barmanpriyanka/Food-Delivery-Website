@@ -19,7 +19,6 @@ const MyOrders = () => {
 
         try {
             setLoading(true);
-            console.log("Fetching orders...");
             const response = await axios.get(
                 `${url}/api/order/userorders`,
                 { 
@@ -28,10 +27,10 @@ const MyOrders = () => {
                 }
             );
             
-            console.log("Orders response:", response.data);
-            
             if (response.data.success && Array.isArray(response.data.orders)) {
-                setData(response.data.orders);
+                // Sort orders by date (latest first)
+                const sortedOrders = response.data.orders.sort((a, b) => new Date(b.date) - new Date(a.date));
+                setData(sortedOrders);
                 setError(null);
             } else if (response.data.message) {
                 setError(response.data.message);
@@ -48,17 +47,11 @@ const MyOrders = () => {
 
     useEffect(() => {
         fetchOrders();
-        
-        // Set up polling every 30 seconds
         const intervalId = setInterval(fetchOrders, 30000);
-        
-        // Clean up interval on component unmount
         return () => clearInterval(intervalId);
     }, [fetchOrders]);
 
-    const handleRefresh = () => {
-        fetchOrders();
-    };
+    const handleRefresh = () => fetchOrders();
 
     return (
         <div className="my-orders">
@@ -74,26 +67,20 @@ const MyOrders = () => {
             </div>
             {error && <div className="error-message">{error}</div>}
             <div className="container">
-                {data.map((order,index)=>{
-                   return(
+                {data.map((order, index) => (
                     <div key={index} className='my-orders-orders'>
-                       <img src={assets.parcel_icon} alt=""/>
-                       <p>{order.items.map((item,index)=>{
-                            if(index===order.items.length-1)
-                            {
-                              return item.name +" x " +item.quantity   
-                            }
-                            else {
-                                return item.name +" x " +item.quantity +", " 
-                            }
-                       })}</p>
-                       <p>${order.amount}.00</p>
-                       <p>Items: {order.items.length}</p>
-                       <p><span>&#x25cf;</span><b>{order.status}</b></p>
-                       <button>Track Order</button>
+                        <img src={assets.parcel_icon} alt=""/>
+                        <p>{order.items.map((item, i) => (
+                            i === order.items.length - 1 
+                            ? `${item.name} x ${item.quantity}` 
+                            : `${item.name} x ${item.quantity}, `
+                        ))}</p>
+                        <p>${order.amount}.00</p>
+                        <p>Items: {order.items.length}</p>
+                        <p><b>{order.status}</b></p>
+                        <button>Track Order</button>
                     </div>
-                   )
-                })}
+                ))}
             </div>
         </div>
     );
