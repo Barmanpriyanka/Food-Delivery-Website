@@ -30,13 +30,13 @@ const Verify = () => {
       console.log("API Response:", response.data); // Debugging response
 
       if (response.data.success) {
-        console.log("Payment successful. Navigating to /myorders...");
+        console.log("Payment successful. Navigating to /thankyou...");
         // Refresh token from localStorage in case it was updated
         const updatedToken = localStorage.getItem("token");
         if (updatedToken) {
           setToken(updatedToken);
         }
-        navigate("/myorders");
+        navigate("/thankyou");
       } else {
         console.log("Payment failed. Navigating to /...");
         navigate("/");
