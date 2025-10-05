@@ -11,7 +11,7 @@ stripe.balance.retrieve()
 
 // Place a new order
 const placeOrder = async (req, res) => {
-  const frontend_url = process.env.FRONTEND_URL || "https://food-delivery-frontend-79ci.onrender.com";
+  const frontend_url = process.env.FRONTEND_URL || "https://food-delivery-frontendd-zpfd.onrender.com";
 
   try {
     const { userId, items, amount, address } = req.body;
