@@ -7,12 +7,13 @@ import { StoreContext } from '../../context/StoreContext';
 
 const Navbar = ({ setShowLogin }) => {
     const [menu, setMenu] = useState("home");
+    const [showSearch, setShowSearch] = useState(false);
     const { getTotalCartAmount, token, setToken } = useContext(StoreContext);
     const navigate=useNavigate();
     const handleLogout = () => {
-        
-        localStorage.removeItem("token"); 
-        setToken(""); 
+
+        localStorage.removeItem("token");
+        setToken("");
        navigate("/")
     }
 
@@ -26,7 +27,10 @@ const Navbar = ({ setShowLogin }) => {
                 <a href="#footer" onClick={() => setMenu("contact-us")} className={menu === "contact-us" ? "active" : ""}>Contact Us</a>
             </ul>
             <div className="navbar-right">
-                <img src={assets.search_icon} alt="Search Icon" />
+                <img src={assets.search_icon} alt="Search Icon" className="search-icon" onClick={() => setShowSearch(!showSearch)} />
+                {showSearch && (
+                    <input type="text" placeholder="Search for food..." className="search-input" />
+                )}
                 <div className="navbar-search-icon">
                     <Link to='/cart'><img src={assets.basket_icon} alt="Basket Icon" /></Link>
                     <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
@@ -37,7 +41,7 @@ const Navbar = ({ setShowLogin }) => {
                     <div className='navbar-profile'>
                         <img src={assets.profile_icon} alt="Profile Icon" />
                         <ul className="nav-profile-dropdown">
-                            <li onClick={()=>{
+                            <li onClick={()=>{ 
                                 navigate('/myorders')
                             }}><img src={assets.bag_icon} alt="Bag Icon" /><p>Orders</p></li>
                             <hr />

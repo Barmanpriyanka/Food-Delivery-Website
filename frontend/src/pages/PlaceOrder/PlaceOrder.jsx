@@ -59,7 +59,7 @@ const PlaceOrder = () => {
     const userId = decoded.id;
 
     // Calculate total amount including delivery fee
-    const deliveryFee = 200; // ₹2 in paise
+    const deliveryFee = 2; // ₹2 as integer
     const totalAmount = subtotal + deliveryFee;
 
     // Format order data for backend
@@ -203,12 +203,12 @@ const PlaceOrder = () => {
             <hr />
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>₹200</p>
+              <p>₹2</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <p>Total</p>
-              <p>₹{getTotalCartAmount() + 200}</p>
+              <p>₹{getTotalCartAmount() + 2}</p>
             </div>
           </div>
           <button type="submit">PROCEED TO PAYMENT</button>
